@@ -1,65 +1,82 @@
-import Image from "next/image";
+import Link from "next/link";
+import ProductCard from "@/components/ProductCard";
+import { CATEGORIES, PRODUCTS } from "@/data/products";
 
 export default function Home() {
+  const ranking = [...PRODUCTS]
+    .sort((a, b) => b.popularity - a.popularity)
+    .slice(0, 10);
+  const sale = PRODUCTS.filter((p) => p.discountRate >= 30)
+    .sort((a, b) => b.discountRate - a.discountRate)
+    .slice(0, 8);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="space-y-14 pt-6">
+      {/* 메인 배너 */}
+      <section className="rounded-2xl bg-black px-8 py-14 text-white md:py-20">
+        <p className="mb-2 text-sm tracking-widest text-neutral-400">2026 SUMMER</p>
+        <h1 className="text-3xl font-black leading-tight md:text-5xl">
+          시즌 오프 세일
+          <br />
+          최대 50% OFF
+        </h1>
+        <Link
+          href="/products?sale=1"
+          className="mt-6 inline-block rounded-full bg-white px-6 py-3 text-sm font-bold text-black"
+        >
+          세일 상품 보기
+        </Link>
+      </section>
+
+      {/* 카테고리 메뉴 */}
+      <section aria-label="카테고리">
+        <div className="grid max-w-lg grid-cols-5 gap-3">
+          {CATEGORIES.map((c) => (
+            <Link
+              key={c.slug}
+              href={`/products?category=${c.slug}`}
+              className="flex flex-col items-center gap-2"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-2xl md:h-16 md:w-16">
+                {c.emoji}
+              </span>
+              <span className="text-xs font-medium">{c.label}</span>
+            </Link>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* 랭킹 TOP 10 */}
+      <section>
+        <div className="mb-4 flex items-end justify-between">
+          <h2 className="text-xl font-bold">실시간 랭킹 TOP 10</h2>
+          <Link href="/products?sort=popular" className="text-xs text-neutral-400">
+            더보기 +
+          </Link>
         </div>
-      </main>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 md:grid-cols-5">
+          {ranking.map((p, i) => (
+            <ProductCard key={p.id} product={p} rank={i + 1} />
+          ))}
+        </div>
+      </section>
+
+      {/* 세일 섹션 */}
+      <section>
+        <div className="mb-4 flex items-end justify-between">
+          <h2 className="text-xl font-bold">
+            놓치면 후회할 <span className="text-red-500">세일</span>
+          </h2>
+          <Link href="/products?sale=1" className="text-xs text-neutral-400">
+            더보기 +
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 md:grid-cols-4">
+          {sale.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
