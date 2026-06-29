@@ -7,7 +7,7 @@ const isGhPages = process.env.GHPAGES === "1";
 const nextConfig: NextConfig = {
   output: "export",
   trailingSlash: true,
-  basePath: isGhPages ? "/musinsa-clone" : "",
+  basePath: isGhPages ? "/musinsa-clone-claude" : "",
 };
 
 export default nextConfig;
